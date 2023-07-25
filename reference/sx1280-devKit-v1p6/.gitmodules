@@ -1,0 +1,3 @@
+[submodule "Demo/sx1280-driver"]
+	path = Demo/sx1280-driver
+	url = git@ch02git1.semnet.dom:sx1280/sx1280-driver.git
