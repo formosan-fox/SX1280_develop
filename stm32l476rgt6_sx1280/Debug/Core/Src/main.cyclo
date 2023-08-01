@@ -1,6 +1,0 @@
-main.cpp:69:5:int main()	1
-main.cpp:125:6:void SystemClock_Config()	4
-main.cpp:175:13:void MX_SPI3_Init()	2
-main.cpp:215:13:void MX_USART2_UART_Init()	2
-main.cpp:250:13:void MX_GPIO_Init()	1
-main.cpp:307:6:void Error_Handler()	1
