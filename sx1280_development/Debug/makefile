@@ -60,8 +60,8 @@ all: main-build
 main-build: sx1280_development.elf secondary-outputs
 
 # Tool invocations
-sx1280_development.elf sx1280_development.map: $(OBJS) $(USER_OBJS) C:\Users\frank\STM32CubeIDE\workspace_1.12.0\sx1280_development\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sx1280_development.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\frank\STM32CubeIDE\workspace_1.12.0\sx1280_development\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sx1280_development.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+sx1280_development.elf sx1280_development.map: $(OBJS) $(USER_OBJS) C:\Users\frank\Desktop\sx1280\sx1280_development\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "sx1280_development.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\frank\Desktop\sx1280\sx1280_development\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sx1280_development.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

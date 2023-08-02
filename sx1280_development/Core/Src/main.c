@@ -181,6 +181,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // SetTx(periodBase, periodBaseCount, '')
+	    *(uint32_t*)tx = 0x83 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	    SPI1_TRANSCEIVER(tx, rx, 4);
+	    // get irq status
+	      *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	      SPI1_TRANSCEIVER(tx, rx, 4);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
