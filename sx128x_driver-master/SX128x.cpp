@@ -70,7 +70,7 @@ void SX128x::SetSleep(SleepParams_t sleepConfig )
 
 void SX128x::SetStandby(RadioStandbyModes_t standbyConfig )
 {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	// std::lock_guard<std::mutex> lg(IOLock2);
 
 	WriteCommand( RADIO_SET_STANDBY, ( uint8_t* )&standbyConfig, 1 );
 	if (standbyConfig == STDBY_RC )
@@ -91,7 +91,7 @@ void SX128x::SetFs(void )
 
 void SX128x::SetTx(TickTime_t timeout )
 {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	// std::lock_guard<std::mutex> lg(IOLock2);
 
 	uint8_t buf[3];
 	buf[0] = timeout.PeriodBase;
@@ -115,7 +115,7 @@ void SX128x::SetTx(TickTime_t timeout )
 
 void SX128x::SetRx(TickTime_t timeout )
 {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	// std::lock_guard<std::mutex> lg(IOLock2);
 
 	uint8_t buf[3];
 	buf[0] = timeout.PeriodBase;
@@ -155,7 +155,7 @@ void SX128x::SetRxDutyCycle(RadioTickSizes_t periodBase, uint16_t periodBaseCoun
 
 void SX128x::SetCad(void )
 {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	// std::lock_guard<std::mutex> lg(IOLock2);
 
 	HalPostTx();
 	HalPreRx();
@@ -165,7 +165,7 @@ void SX128x::SetCad(void )
 
 void SX128x::SetTxContinuousWave(void )
 {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	// std::lock_guard<std::mutex> lg(IOLock2);
 
 	HalPostRx();
 	HalPreTx();
@@ -174,7 +174,7 @@ void SX128x::SetTxContinuousWave(void )
 
 void SX128x::SetTxContinuousPreamble(void )
 {
-	std::lock_guard<std::mutex> lg(IOLock2);
+	// std::lock_guard<std::mutex> lg(IOLock2);
 
 	HalPostRx();
 	HalPreTx();
@@ -959,7 +959,7 @@ int32_t SX128x::GetLoRaBandwidth( )
 //}
 
 void SX128x::ProcessIrqs() {
-	std::unique_lock<std::mutex> lg(IOLock2);
+	// std::unique_lock<std::mutex> lg(IOLock2);
 
 	RadioPacketTypes_t packetType = PACKET_TYPE_NONE;
 
@@ -981,7 +981,7 @@ void SX128x::ProcessIrqs() {
 	uint16_t irqRegs = GetIrqStatus();
 	ClearIrqStatus( IRQ_RADIO_ALL );
 
-	lg.unlock();
+// lg.unlock();
 
 	auto& txDone = callbacks.txDone;
 	auto& rxDone = callbacks.rxDone;
@@ -1442,7 +1442,7 @@ void SX128x::WaitOnBusyLong() {
 }
 
 void SX128x::Reset(void) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	HalGpioWrite(GPIO_PIN_RESET, 0);
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -1452,7 +1452,7 @@ void SX128x::Reset(void) {
 }
 
 void SX128x::Wakeup(void) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	if (SX1280_DEBUG) {
 		printf("SX1280: Wakeup\n");
@@ -1476,7 +1476,7 @@ void SX128x::WriteCommand(SX128x::RadioCommands_t opcode, uint8_t *buffer, uint1
 	merged_buf[0] = opcode;
 	memcpy(merged_buf+1, buffer, size);
 
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	if (SX1280_DEBUG) {
 		printf("SX1280: WriteCommand: 0x%02x %u\n", opcode, size);
@@ -1499,7 +1499,7 @@ void SX128x::WriteCommand(SX128x::RadioCommands_t opcode, uint8_t *buffer, uint1
 }
 
 void SX128x::ReadCommand(SX128x::RadioCommands_t opcode, uint8_t *buffer, uint16_t size) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
 
@@ -1526,7 +1526,7 @@ void SX128x::ReadCommand(SX128x::RadioCommands_t opcode, uint8_t *buffer, uint16
 }
 
 void SX128x::WriteRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	if (SX1280_DEBUG) {
 		printf("SX1280: WriteRegister: 0x%04x %u\n", address, size);
@@ -1560,7 +1560,7 @@ void SX128x::WriteRegister(uint16_t address, uint8_t value) {
 }
 
 void SX128x::ReadRegister(uint16_t address, uint8_t *buffer, uint16_t size) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
 
@@ -1588,7 +1588,7 @@ uint8_t SX128x::ReadRegister(uint16_t address) {
 }
 
 void SX128x::WriteBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
 
@@ -1606,7 +1606,7 @@ void SX128x::WriteBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
 }
 
 void SX128x::ReadBuffer(uint8_t offset, uint8_t *buffer, uint8_t size) {
-	std::lock_guard<std::mutex> lg(IOLock);
+	// std::lock_guard<std::mutex> lg(IOLock);
 
 	WaitOnBusy();
 
