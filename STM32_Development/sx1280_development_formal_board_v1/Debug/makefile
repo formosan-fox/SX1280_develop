@@ -60,8 +60,8 @@ all: main-build
 main-build: sx1280_development_formal_board_v1.elf secondary-outputs
 
 # Tool invocations
-sx1280_development_formal_board_v1.elf sx1280_development_formal_board_v1.map: $(OBJS) $(USER_OBJS) C:\Users\frank\Desktop\sx1280\sx1280_development_formal_board_v1\STM32F446RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sx1280_development_formal_board_v1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\frank\Desktop\sx1280\sx1280_development_formal_board_v1\STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sx1280_development_formal_board_v1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+sx1280_development_formal_board_v1.elf sx1280_development_formal_board_v1.map: $(OBJS) $(USER_OBJS) C:\Users\frank\Desktop\sx1280\STM32_Development\sx1280_development_formal_board_v1\STM32F446RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "sx1280_development_formal_board_v1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\frank\Desktop\sx1280\STM32_Development\sx1280_development_formal_board_v1\STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sx1280_development_formal_board_v1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

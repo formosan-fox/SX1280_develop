@@ -1,0 +1,97 @@
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\arm-none-eabi\include\c++\11.3.1\arm-none-eabi\thumb\v7e-m+fp\hard\bits\gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:247:10:bool std::_Function_base::_M_empty() const	1
+../Core/Inc/SX128x.hpp:1055:15:virtual void SX128x::HalPreTx()	1
+../Core/Inc/SX128x.hpp:1059:15:virtual void SX128x::HalPreRx()	1
+../Core/Inc/SX128x.hpp:1063:15:virtual void SX128x::HalPostTx()	1
+../Core/Inc/SX128x.hpp:1067:15:virtual void SX128x::HalPostRx()	1
+../Core/Inc/SX128x.hpp:1378:18:virtual uint8_t SX128x::GetDioStatus()	1
+../Core/Src/SX128x.cpp:27:6:void SX128x::Init()	1
+../Core/Src/SX128x.cpp:33:6:void SX128x::SetRegistersDefault()	1
+../Core/Src/SX128x.cpp:40:10:virtual uint16_t SX128x::GetFirmwareVersion()	1
+../Core/Src/SX128x.cpp:45:23:virtual SX128x::RadioStatus_t SX128x::GetStatus()	1
+../Core/Src/SX128x.cpp:55:31:virtual SX128x::RadioOperatingModes_t SX128x::GetOpMode()	1
+../Core/Src/SX128x.cpp:60:6:void SX128x::SetSleep(SX128x::SleepParams_t)	1
+../Core/Src/SX128x.cpp:71:6:void SX128x::SetStandby(SX128x::RadioStandbyModes_t)	2
+../Core/Src/SX128x.cpp:86:6:void SX128x::SetFs()	1
+../Core/Src/SX128x.cpp:92:6:void SX128x::SetTx(SX128x::TickTime_t)	2
+../Core/Src/SX128x.cpp:116:6:void SX128x::SetRx(SX128x::TickTime_t)	2
+../Core/Src/SX128x.cpp:140:6:void SX128x::SetRxDutyCycle(SX128x::RadioTickSizes_t, uint16_t, uint16_t)	1
+../Core/Src/SX128x.cpp:156:6:void SX128x::SetCad()	1
+../Core/Src/SX128x.cpp:166:6:void SX128x::SetTxContinuousWave()	1
+../Core/Src/SX128x.cpp:175:6:void SX128x::SetTxContinuousPreamble()	1
+../Core/Src/SX128x.cpp:184:6:void SX128x::SetPacketType(SX128x::RadioPacketTypes_t)	1
+../Core/Src/SX128x.cpp:192:28:SX128x::RadioPacketTypes_t SX128x::GetPacketType(bool)	3
+../Core/Src/SX128x.cpp:210:6:void SX128x::SetRfFrequency(uint32_t)	1
+../Core/Src/SX128x.cpp:222:6:void SX128x::SetTxParams(int8_t, SX128x::RadioRampTimes_t)	1
+../Core/Src/SX128x.cpp:233:6:void SX128x::SetCadParams(SX128x::RadioLoRaCadSymbols_t)	1
+../Core/Src/SX128x.cpp:239:6:void SX128x::SetBufferBaseAddresses(uint8_t, uint8_t)	1
+../Core/Src/SX128x.cpp:248:6:void SX128x::SetModulationParams(const SX128x::ModulationParams_t&)	7
+../Core/Src/SX128x.cpp:293:6:void SX128x::SetPacketParams(const SX128x::PacketParams_t&)	7
+../Core/Src/SX128x.cpp:356:6:void SX128x::ForcePreambleLength(SX128x::RadioPreambleLengths_t)	1
+../Core/Src/SX128x.cpp:361:6:void SX128x::GetRxBufferStatus(uint8_t*, uint8_t*)	5
+../Core/Src/SX128x.cpp:387:6:void SX128x::GetPacketStatus(SX128x::PacketStatus_t*)	8
+../Core/Src/SX128x.cpp:463:8:int8_t SX128x::GetRssiInst()	1
+../Core/Src/SX128x.cpp:472:6:void SX128x::SetDioIrqParams(uint16_t, uint16_t, uint16_t, uint16_t)	1
+../Core/Src/SX128x.cpp:487:10:uint16_t SX128x::GetIrqStatus()	1
+../Core/Src/SX128x.cpp:494:6:void SX128x::ClearIrqStatus(uint16_t)	1
+../Core/Src/SX128x.cpp:503:6:void SX128x::Calibrate(SX128x::CalibrationParams_t)	1
+../Core/Src/SX128x.cpp:514:6:void SX128x::SetRegulatorMode(SX128x::RadioRegulatorModes_t)	1
+../Core/Src/SX128x.cpp:519:6:void SX128x::SetSaveContext()	1
+../Core/Src/SX128x.cpp:524:6:void SX128x::SetAutoTx(uint16_t)	1
+../Core/Src/SX128x.cpp:534:6:void SX128x::StopAutoTx()	1
+../Core/Src/SX128x.cpp:540:6:void SX128x::SetAutoFs(bool)	1
+../Core/Src/SX128x.cpp:545:6:void SX128x::SetLongPreamble(bool)	1
+../Core/Src/SX128x.cpp:550:6:void SX128x::SetPayload(uint8_t*, uint8_t, uint8_t)	1
+../Core/Src/SX128x.cpp:555:9:uint8_t SX128x::GetPayload(uint8_t*, uint8_t*, uint8_t)	2
+../Core/Src/SX128x.cpp:568:6:void SX128x::SendPayload(uint8_t*, uint8_t, SX128x::TickTime_t, uint8_t)	1
+../Core/Src/SX128x.cpp:574:9:uint8_t SX128x::SetSyncWord(uint8_t, uint8_t*)	14
+../Core/Src/SX128x.cpp:637:6:void SX128x::SetSyncWordErrorTolerance(uint8_t)	1
+../Core/Src/SX128x.cpp:643:9:uint8_t SX128x::SetCrcSeed(uint8_t*)	5
+../Core/Src/SX128x.cpp:665:6:void SX128x::SetBleAccessAddress(uint32_t)	1
+../Core/Src/SX128x.cpp:673:6:void SX128x::SetBleAdvertizerAccessAddress()	1
+../Core/Src/SX128x.cpp:678:6:void SX128x::SetCrcPolynomial(uint16_t)	3
+../Core/Src/SX128x.cpp:696:6:void SX128x::SetWhiteningSeed(uint8_t)	4
+../Core/Src/SX128x.cpp:710:6:void SX128x::EnableManualGain()	1
+../Core/Src/SX128x.cpp:716:6:void SX128x::DisableManualGain()	1
+../Core/Src/SX128x.cpp:722:6:void SX128x::SetManualGainValue(uint8_t)	1
+../Core/Src/SX128x.cpp:727:6:void SX128x::SetLNAGainSetting(SX128x::RadioLnaSettings_t)	3
+../Core/Src/SX128x.cpp:744:6:void SX128x::SetRangingIdLength(SX128x::RadioRangingIdCheckLengths_t)	2
+../Core/Src/SX128x.cpp:756:6:void SX128x::SetDeviceRangingAddress(uint32_t)	2
+../Core/Src/SX128x.cpp:771:6:void SX128x::SetRangingRequestAddress(uint32_t)	2
+../Core/Src/SX128x.cpp:786:8:double SX128x::GetRangingResult(SX128x::RadioRangingResultTypes_t)	5
+../Core/Src/SX128x.cpp:827:9:uint8_t SX128x::GetRangingPowerDeltaThresholdIndicator()	1
+../Core/Src/SX128x.cpp:835:6:void SX128x::SetRangingCalibration(uint16_t)	2
+../Core/Src/SX128x.cpp:848:6:void SX128x::RangingClearFilterResult()	1
+../Core/Src/SX128x.cpp:857:6:void SX128x::RangingSetFilterNumSamples(uint8_t)	1
+../Core/Src/SX128x.cpp:863:6:void SX128x::SetRangingRole(SX128x::RadioRangingRoles_t)	1
+../Core/Src/SX128x.cpp:871:8:double SX128x::GetFrequencyError()	2
+../Core/Src/SX128x.cpp:905:9:static int32_t SX128x::complement2(uint32_t, uint8_t)	2
+../Core/Src/SX128x.cpp:915:9:int32_t SX128x::GetLoRaBandwidth()	7
+../Core/Src/SX128x.cpp:961:6:void SX128x::ProcessIrqs()	68
+../Core/Src/SX128x.cpp:1220:10:static uint16_t SX128x::GetTimeOnAir(const SX128x::ModulationParams_t&, const SX128x::PacketParams_t&)	52
+../Core/Src/SX128x.cpp:1413:10:uint16_t SX128x::GetTimeOnAir()	1
+../Core/Src/SX128x.cpp:1418:6:void SX128x::HalSpiRead(uint8_t*, uint16_t)	1
+../Core/Src/SX128x.cpp:1424:6:void SX128x::HalSpiWrite(const uint8_t*, uint16_t)	1
+../Core/Src/SX128x.cpp:1429:6:void SX128x::WaitOnBusy()	1
+../Core/Src/SX128x.cpp:1436:6:void SX128x::WaitOnBusyLong()	2
+../Core/Src/SX128x.cpp:1443:6:virtual void SX128x::Reset()	1
+../Core/Src/SX128x.cpp:1455:6:virtual void SX128x::Wakeup()	1
+../Core/Src/SX128x.cpp:1470:6:virtual void SX128x::WriteCommand(SX128x::RadioCommands_t, uint8_t*, uint16_t)	1
+../Core/Src/SX128x.cpp:1492:6:virtual void SX128x::ReadCommand(SX128x::RadioCommands_t, uint8_t*, uint16_t)	2
+../Core/Src/SX128x.cpp:1519:6:virtual void SX128x::WriteRegister(uint16_t, uint8_t*, uint16_t)	1
+../Core/Src/SX128x.cpp:1543:6:virtual void SX128x::WriteRegister(uint16_t, uint8_t)	1
+../Core/Src/SX128x.cpp:1547:6:virtual void SX128x::ReadRegister(uint16_t, uint8_t*, uint16_t)	1
+../Core/Src/SX128x.cpp:1568:9:virtual uint8_t SX128x::ReadRegister(uint16_t)	1
+../Core/Src/SX128x.cpp:1575:6:virtual void SX128x::WriteBuffer(uint8_t, uint8_t*, uint8_t)	1
+../Core/Src/SX128x.cpp:1593:6:virtual void SX128x::ReadBuffer(uint8_t, uint8_t*, uint8_t)	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:572:16:)>::operator bool() const [with _Res = void; _ArgTypes = {SX128x::IrqErrorCode_t}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:586:7:) const [with _Res = void; _ArgTypes = {SX128x::IrqErrorCode_t}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:572:16:)>::operator bool() const [with _Res = void; _ArgTypes = {}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:586:7:) const [with _Res = void; _ArgTypes = {}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:572:16:)>::operator bool() const [with _Res = void; _ArgTypes = {bool}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:586:7:) const [with _Res = void; _ArgTypes = {bool}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:572:16:)>::operator bool() const [with _Res = void; _ArgTypes = {SX128x::IrqRangingCode_t}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/std_function.h:586:7:) const [with _Res = void; _ArgTypes = {SX128x::IrqRangingCode_t}]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/move.h:77:5:constexpr _Tp&& std::forward(typename std::remove_reference<_Tp>::type&) [with _Tp = SX128x::IrqErrorCode_t]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/move.h:77:5:constexpr _Tp&& std::forward(typename std::remove_reference<_Tp>::type&) [with _Tp = bool]	1
+C:\ST\STM32CubeIDE_1.13.1\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.0.202305231506\tools\bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/include/c++/11.3.1/bits/move.h:77:5:constexpr _Tp&& std::forward(typename std::remove_reference<_Tp>::type&) [with _Tp = SX128x::IrqRangingCode_t]	1

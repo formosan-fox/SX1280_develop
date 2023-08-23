@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (10.3-2021.10)
+# Toolchain: GNU Tools for STM32 (11.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -60,8 +60,8 @@ all: main-build
 main-build: sx1280_development.elf secondary-outputs
 
 # Tool invocations
-sx1280_development.elf sx1280_development.map: $(OBJS) $(USER_OBJS) C:\Users\frank\Desktop\sx1280\sx1280_development\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "sx1280_development.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\frank\Desktop\sx1280\sx1280_development\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sx1280_development.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+sx1280_development.elf sx1280_development.map: $(OBJS) $(USER_OBJS) C:\Users\frank\Desktop\sx1280\STM32_Development\sx1280_development\STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "sx1280_development.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\frank\Desktop\sx1280\STM32_Development\sx1280_development\STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sx1280_development.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

@@ -63,7 +63,7 @@ static void SPI1_TRANSCEIVER(uint8_t* tx, uint8_t* rx, uint8_t lengh)
 	}
 	while(temp & 0x04);
 	HAL_GPIO_WritePin(SX1280_NSS_1_GPIO_Port, SX1280_NSS_1_Pin, GPIO_PIN_RESET);
-//	HAL_Delay(1);
+	HAL_Delay(1);
 	HAL_SPI_TransmitReceive(&hspi2, tx, rx, lengh, 10);
 	HAL_GPIO_WritePin(SX1280_NSS_1_GPIO_Port, SX1280_NSS_1_Pin, GPIO_PIN_SET);
 }
@@ -131,20 +131,20 @@ int main(void)
   rv = HAL_I2C_Mem_Write(&hi2c2, 0x78, 0x01, I2C_MEMADD_SIZE_8BIT, tx, 1, 10);
   rv = HAL_I2C_Mem_Read (&hi2c2, 0x78, 0x00, I2C_MEMADD_SIZE_8BIT, rx, 1, 10);
 
+  if(rv != HAL_OK)
+  {
+	  Error_Handler();
+  }
+
+  //===========================================
+  // common transceiver setting for LoRa
+  //===========================================
   //===========================================
   // common transceiver setting for LoRa
   //===========================================
 
   // setstandby(stdby_rc)
   *(uint32_t*)tx = 0x80 | 0x00 << 8;
-  SPI1_TRANSCEIVER(tx, rx, 2);
-
-  // setstandby(stdby_oxcs)
-  *(uint32_t*)tx = 0x80 | 0x01 << 8;
-  SPI1_TRANSCEIVER(tx, rx, 2);
-
-  // setpackettype(packet_type_lora)
-  *(uint32_t*)tx = 0x8A | 0x01 << 8; // LoRa mode
   SPI1_TRANSCEIVER(tx, rx, 2);
 
   // setpackettype(packet_type_lora)
@@ -167,6 +167,38 @@ int main(void)
   *(uint32_t*)tx = 0x8C | 0x0C << 8 | 0x00 << 16 | 0x04 << 24;
   *(uint32_t*)(tx+4) = 0x40 | 0x00 << 8 | 0x00 << 16;
   SPI1_TRANSCEIVER(tx, rx, 7);
+//  // setstandby(stdby_rc)
+//  *(uint32_t*)tx = 0x80 | 0x00 << 8;
+//  SPI1_TRANSCEIVER(tx, rx, 2);
+//
+//  // setstandby(stdby_oxcs)
+//  *(uint32_t*)tx = 0x80 | 0x01 << 8;
+//  SPI1_TRANSCEIVER(tx, rx, 2);
+//
+//  // setpackettype(packet_type_lora)
+//  *(uint32_t*)tx = 0x8A | 0x01 << 8; // LoRa mode
+//  SPI1_TRANSCEIVER(tx, rx, 2);
+//
+//  // setpackettype(packet_type_lora)
+//  *(uint32_t*)tx = 0x8A | 0x01 << 8; // LoRa mode
+//  SPI1_TRANSCEIVER(tx, rx, 2);
+//
+//  // setrffrequency(rfFrequency)
+//  *(uint32_t*)tx = 0x86 | 0xB8 << 8 | 0x9D << 16 | 0x89 << 24;
+//  SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//  // setbufferbaseaddress()
+//  *(uint32_t*)tx = 0x8F | 0x80 << 8 | 0x00 << 16;
+//  SPI1_TRANSCEIVER(tx, rx, 3);
+//
+//  // setmodulationparams(modparam1, modparam2, modparam3)
+//  *(uint32_t*)tx = 0x8B | 0x70 << 8 | 0x18 << 16 | 0x01 << 24;
+//  SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//  // setpacketparams(pktparam1, pktparam2, pktparam3, pktparam4, pktparam5)
+//  *(uint32_t*)tx = 0x8C | 0x0C << 8 | 0x00 << 16 | 0x08 << 24;
+//  *(uint32_t*)(tx+4) = 0x20 | 0x40 << 8;
+//  SPI1_TRANSCEIVER(tx, rx, 8);
 
 //   //===========================================
 //   // Tx Setting and Operations
@@ -247,6 +279,20 @@ int main(void)
   /* USER CODE BEGIN WHILE */
  while (1)
  {
+//	  // WriteBuffer(offset, *data)
+//	  *(uint32_t*)tx = 0x1A | 0x80 << 8 | 0x05 << 16 | 0x04 << 24;
+//	  *(uint32_t*)(tx+4) = 0x08 | 0x07 << 8;
+//	  SPI1_TRANSCEIVER(tx, rx, 6);
+//	  // SetTx(periodBase, periodBaseCount, '')
+//	    *(uint32_t*)tx = 0x83 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//	    SPI1_TRANSCEIVER(tx, rx, 4);
+//	    // get irq status
+//	     *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//	      SPI1_TRANSCEIVER(tx, rx, 4);
+//	      HAL_Delay(500);
+
+	      //================================================================
+
 	  // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
 	     *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
 	     SPI1_TRANSCEIVER(tx, rx, 4);
@@ -404,7 +450,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -486,9 +532,11 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
+//  __disable_irq();
   while (1)
   {
+	  HAL_Delay(500);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
   }
   /* USER CODE END Error_Handler_Debug */
 }

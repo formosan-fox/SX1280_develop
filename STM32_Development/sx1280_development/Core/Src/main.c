@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,6 +42,8 @@
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
 
+TIM_HandleTypeDef htim1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -53,11 +55,30 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
+static void SPI1_TRANSCEIVER_Delay(uint8_t* tx, uint8_t* rx, uint8_t lengh)
+{
+	HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_RESET);
+
+//	for (int i = 0; i < 100; i++);
+	HAL_Delay(1);
+//	uint16_t temp = __HAL_TIM_GET_COUNTER(&htim1);
+//	while (__HAL_TIM_GET_COUNTER(&htim1) - temp < 1000);
+
+	HAL_SPI_TransmitReceive(&hspi1, tx, rx, lengh, 10);
+	HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_SET);
+}
+
 static void SPI1_TRANSCEIVER(uint8_t* tx, uint8_t* rx, uint8_t lengh)
 {
 	HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_RESET);
-	HAL_Delay(1);
+
+	for (int i = 0; i < 100; i++);
+//	HAL_Delay(1);
+//	uint16_t temp = __HAL_TIM_GET_COUNTER(&htim1);
+//	while (__HAL_TIM_GET_COUNTER(&htim1) - temp < 1000);
+
 	HAL_SPI_TransmitReceive(&hspi1, tx, rx, lengh, 10);
 	HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_SET);
 }
@@ -98,9 +119,16 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_SPI1_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Base_Start(&htim1);
 
+  char uart_buf[100];
+  int uart_buf_len;
+  int received;
 
+  uart_buf_len = sprintf(uart_buf, "SX1280 RX bit rate test\r\n");
+  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
   //===========================================
   //===========================================
   //===========================================
@@ -110,22 +138,27 @@ int main(void)
 
   // reset
   HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
-  HAL_Delay(10);
+  HAL_Delay(100);
   HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_RESET);
-  HAL_Delay(10);
+  HAL_Delay(100);
   HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
 
   //===========================================
   // common transceiver setting for LoRa
   //===========================================
 
-  // setstandby(stdby_rc)
+  // setstandby(stdby_xosc)
   *(uint32_t*)tx = 0x80 | 0x01 << 8;
-  SPI1_TRANSCEIVER(tx, rx, 2);
+  SPI1_TRANSCEIVER_Delay(tx, rx, 2);
 
   // setpackettype(packet_type_lora)
   *(uint32_t*)tx = 0x8A | 0x01 << 8; // LoRa mode
-  SPI1_TRANSCEIVER(tx, rx, 2);
+  SPI1_TRANSCEIVER_Delay(tx, rx, 2);
+  if (rx[0] != 0x65 && rx[0]!=0x64 && rx[0]!=0x54) {
+	  uart_buf_len = sprintf(uart_buf, "Error with state %X\r\n", rx[0]);
+	  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+	  Error_Handler();
+  }
 
   // setrffrequency(rfFrequency)
   *(uint32_t*)tx = 0x86 | 0xB8 << 8 | 0x9D << 16 | 0x89 << 24;
@@ -136,66 +169,185 @@ int main(void)
   SPI1_TRANSCEIVER(tx, rx, 3);
 
   // setmodulationparams(modparam1, modparam2, modparam3)
-  *(uint32_t*)tx = 0x8B | 0x70 << 8 | 0x0A << 16 | 0x01 << 24;
+  *(uint32_t*)tx = 0x8B | 0x70 << 8 | 0x18 << 16 | 0x01 << 24;
   SPI1_TRANSCEIVER(tx, rx, 4);
 
   // setpacketparams(pktparam1, pktparam2, pktparam3, pktparam4, pktparam5)
-  *(uint32_t*)tx = 0x8C | 0x0C << 8 | 0x00 << 16 | 0x04 << 24;
-  *(uint32_t*)(tx+4) = 0x40 | 0x00 << 8 | 0x00 << 16;
-  SPI1_TRANSCEIVER(tx, rx, 7);
+  *(uint32_t*)tx = 0x8C | 0x0C << 8 | 0x80 << 16 | 0x08 << 24;
+  *(uint32_t*)(tx+4) = 0x20 | 0x40 << 8 | 0x00 << 16 | 0x00 << 24;
+  SPI1_TRANSCEIVER(tx, rx, 8);
 
-  //===========================================
-  // Tx Setting and Operations
-  //===========================================
+  //   //===========================================
+  //   // Tx Setting and Operations
+  //   //===========================================
+  //
+  //   // SetTxParams(power, rampTime)
+  //   *(uint32_t*)tx = 0x8E | 0x1F << 8 | 0xE0 << 16 | 0x01 << 24;
+  //   SPI1_TRANSCEIVER(tx, rx, 4);
+  //
+  //   // WriteBuffer(offset, *data)
+  //   *(uint32_t*)tx = 0x1A | 0x80 << 8 | 0x05 << 16 | 0x04 << 24;
+  //   *(uint32_t*)(tx+4) = 0x08 | 0x07 << 8;
+  //   SPI1_TRANSCEIVER(tx, rx, 6);
+  //
+  //   // SetDioIrqParams(irqMask, dio1Mask, dio2Mask, dio3Mask)
+  //   *(uint32_t*)tx = 0x8D | 0x40 << 8 | 0x23 << 16 | 0x00 << 24;
+  //   *(uint32_t*)(tx+4) = 0x01 | 0x00 << 8 | 0x02 << 16 | 0x40 << 24;
+  //   *(uint32_t*)(tx+8) = 0x20;
+  //   SPI1_TRANSCEIVER(tx, rx, 9);
+  //
+  //   // SetTx(periodBase, periodBaseCount, '')
+  //   *(uint32_t*)tx = 0x83 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  //   SPI1_TRANSCEIVER(tx, rx, 4);
+  //
+  //   // get irq status
+  //   *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  //   SPI1_TRANSCEIVER(tx, rx, 4);
 
-  // SetTxParams(power, rampTime)
-  *(uint32_t*)tx = 0x8E | 0x1F << 8 | 0xE0 << 16 | 0x01 << 24;
-  SPI1_TRANSCEIVER(tx, rx, 4);
+    //===========================================
+    // Rx Setting and Operations
+    //===========================================
 
-  // WriteBuffer(offset, *data)
-  *(uint32_t*)tx = 0x1A | 0x80 << 8 | 0x05 << 16 | 0x04 << 24;
-  *(uint32_t*)(tx+4) = 0x08 | 0x07 << 8;
-  SPI1_TRANSCEIVER(tx, rx, 6);
+    // SetDioIrqParams(irqMask, dio1Mask, dio2Mask, dio3Mask)
+    *(uint32_t*)tx = 0x8D | 0x40 << 8 | 0x23 << 16 | 0x00 << 24;
+    *(uint32_t*)(tx+4) = 0x01 | 0x00 << 8 | 0x02 << 16 | 0x40 << 24;
+    *(uint32_t*)(tx+8) = 0x20;
+    SPI1_TRANSCEIVER(tx, rx, 9);
 
-  // SetDioIrqParams(irqMask, dio1Mask, dio2Mask, dio3Mask)
-  *(uint32_t*)tx = 0x8D | 0x40 << 8 | 0x23 << 16 | 0x00 << 24;
-  *(uint32_t*)(tx+4) = 0x01 | 0x00 << 8 | 0x02 << 16 | 0x40 << 24;
-  *(uint32_t*)(tx+8) = 0x20;
-  SPI1_TRANSCEIVER(tx, rx, 9);
+    // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
+    *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+    SPI1_TRANSCEIVER(tx, rx, 4);
 
-  // SetTx(periodBase, periodBaseCount, '')
-  *(uint32_t*)tx = 0x83 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  SPI1_TRANSCEIVER(tx, rx, 4);
+    // WaitIrq
+    while(1)
+    {
+    	int temp = HAL_GetTick();
+  	   *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	   SPI1_TRANSCEIVER(tx, rx, 4);
+  	   if(rx[3] & 0x02) break;
+  	   if(HAL_GetTick() - temp > 3) break;
+    }
 
-  // get irq status
-  *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  SPI1_TRANSCEIVER(tx, rx, 4);
+    // GetPacketStatus()
+    *(uint32_t*)tx = 0x1D | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+    *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16;
+    SPI1_TRANSCEIVER(tx, rx, 7);
 
-  //===========================================
-  //===========================================
-  //===========================================
+    // ClrIrqStatus(irqMask)
+    *(uint32_t*)tx = 0x97 | 0xFF << 8 | 0xFF << 16;
+    SPI1_TRANSCEIVER(tx, rx, 3);
+
+    // GetRxBufferStatus()
+    *(uint32_t*)tx = 0x17 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+    SPI1_TRANSCEIVER(tx, rx, 4);
+
+    // ReadBuffer(offset, payloadLengthRx)
+	 *(uint32_t*)tx = 0x1B | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	 *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	 *(uint32_t*)(tx+8) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	 SPI1_TRANSCEIVER(tx, rx, 11);
+
+	 received = *(int*) (rx+3);
+//	 uart_buf_len = sprintf(uart_buf, "received: %05d\r\n", received);
+//	 HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+    // FrequencyError[Hz]
+
+    //===========================================
+    //===========================================
+    //===========================================
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-	  // WriteBuffer(offset, *data)
-	  *(uint32_t*)tx = 0x1A | 0x80 << 8 | 0x05 << 16 | 0x04 << 24;
-	  *(uint32_t*)(tx+4) = 0x08 | 0x07 << 8;
-	  SPI1_TRANSCEIVER(tx, rx, 6);
-	  // SetTx(periodBase, periodBaseCount, '')
-	    *(uint32_t*)tx = 0x83 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	    SPI1_TRANSCEIVER(tx, rx, 4);
-	    // get irq status
-	     *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	      SPI1_TRANSCEIVER(tx, rx, 4);
-	      HAL_Delay(500);
+   int time_temp = HAL_GetTick();
+   uint8_t received_arr[100] = {0};
+   int pre_get = 0;
+   uint8_t sum;
+   float bps;
+   uart_buf_len = sprintf(uart_buf, "SX1280 RX bit rate test\r\n");
+   HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+   while (1)
+   {
+	      // WriteBuffer(offset, *data)
+	      *(uint32_t*)tx = 0x1A | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	      *(uint32_t*)(tx+4) = 0x00000000;
+	      SPI1_TRANSCEIVER(tx, rx, 8);
+	      // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
+  	     *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     SPI1_TRANSCEIVER(tx, rx, 4);
+
+  	     // WaitIrq
+  	     while(1)
+  	     {
+  	  	   *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	  	   SPI1_TRANSCEIVER(tx, rx, 4);
+  	  	   if(rx[3] & 0x02) break;
+  	     }
+
+  	     // GetPacketStatus()
+  	     *(uint32_t*)tx = 0x1D | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16;
+  	     SPI1_TRANSCEIVER(tx, rx, 7);
+
+  	     // ClrIrqStatus(irqMask)
+  	     *(uint32_t*)tx = 0x97 | 0xFF << 8 | 0xFF << 16;
+  	     SPI1_TRANSCEIVER(tx, rx, 3);
+
+  	    *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     SPI1_TRANSCEIVER(tx, rx, 4);
+
+  	     // GetRxBufferStatus()
+  	     *(uint32_t*)tx = 0x17 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     SPI1_TRANSCEIVER(tx, rx, 4);
+
+  	     // ReadBuffer(offset, payloadLengthRx)
+  	     *(uint32_t*)tx = 0x1B | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     *(uint32_t*)(tx+8) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  	     SPI1_TRANSCEIVER(tx, rx, 11);
+
+  		 received = *(int*) (rx+3);
+//  		 uart_buf_len = sprintf(uart_buf, "received: %05d\r\n", received);
+//  		 HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+  	     // FrequencyError[Hz]
+  		 if(received < 100 && received >= 0) // valid
+  		 {
+  			if(pre_get > received)
+  			{
+  				time_temp = HAL_GetTick() - time_temp;
+  				sum = 0;
+  				for(int i = 0; i < 100; i++)
+  				{
+  					if(received_arr[i] == 1)
+  					{
+  						sum ++;
+  					}
+  				}
+  				bps = sum*8*8*1000./time_temp;
+  				uart_buf_len = sprintf(uart_buf, "Bit Rate: %15.5f bps, sum: %03d\r\n", bps, sum);
+  				HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+  				// end
+				for(int i = 0; i < 100; i++)
+				{
+					received_arr[i] = 0;
+				}
+				time_temp = HAL_GetTick();
+  			}
+  			pre_get = received;
+  			received_arr[received] = 1;
+  		 }
+
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+   }
   /* USER CODE END 3 */
 }
 
@@ -270,7 +422,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.NSS = SPI_NSS_HARD_OUTPUT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
@@ -285,6 +437,53 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief TIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM1_Init(void)
+{
+
+  /* USER CODE BEGIN TIM1_Init 0 */
+
+  /* USER CODE END TIM1_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM1_Init 1 */
+
+  /* USER CODE END TIM1_Init 1 */
+  htim1.Instance = TIM1;
+  htim1.Init.Prescaler = 79;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.Period = 65535;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim1.Init.RepetitionCounter = 0;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM1_Init 2 */
+
+  /* USER CODE END TIM1_Init 2 */
 
 }
 
@@ -304,7 +503,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 921600;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -385,6 +584,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+//	  HAL_UART_Transmit(&huart2, "error\r\n", 7, 100);
   }
   /* USER CODE END Error_Handler_Debug */
 }
