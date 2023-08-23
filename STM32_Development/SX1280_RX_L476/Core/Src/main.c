@@ -187,40 +187,40 @@ int main(void)
     *(uint32_t*)(tx+8) = 0x20;
     SPI1_TRANSCEIVER(tx, rx, 9);
 
-    // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
-    *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-    SPI1_TRANSCEIVER(tx, rx, 4);
+  //   // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
+  //   *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  //   SPI1_TRANSCEIVER(tx, rx, 4);
 
-    // WaitIrq
-    while(1)
-    {
-  	   *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	   SPI1_TRANSCEIVER(tx, rx, 4);
-  	   if(rx[3] & 0x02) break;
-    }
+  //   // WaitIrq
+  //   while(1)
+  //   {
+  // 	   *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  // 	   SPI1_TRANSCEIVER(tx, rx, 4);
+  // 	   if(rx[3] & 0x02) break;
+  //   }
 
-    // GetPacketStatus()
-    *(uint32_t*)tx = 0x1D | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-    *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16;
-    SPI1_TRANSCEIVER(tx, rx, 7);
+  //   // GetPacketStatus()
+  //   *(uint32_t*)tx = 0x1D | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  //   *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16;
+  //   SPI1_TRANSCEIVER(tx, rx, 7);
 
-    // ClrIrqStatus(irqMask)
-    *(uint32_t*)tx = 0x97 | 0xFF << 8 | 0xFF << 16;
-    SPI1_TRANSCEIVER(tx, rx, 3);
+  //   // ClrIrqStatus(irqMask)
+  //   *(uint32_t*)tx = 0x97 | 0xFF << 8 | 0xFF << 16;
+  //   SPI1_TRANSCEIVER(tx, rx, 3);
 
-    // GetRxBufferStatus()
-    *(uint32_t*)tx = 0x17 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-    SPI1_TRANSCEIVER(tx, rx, 4);
+  //   // GetRxBufferStatus()
+  //   *(uint32_t*)tx = 0x17 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+  //   SPI1_TRANSCEIVER(tx, rx, 4);
 
-    // ReadBuffer(offset, payloadLengthRx)
-	 *(uint32_t*)tx = 0x1B | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	 *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	 *(uint32_t*)(tx+8) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	 SPI1_TRANSCEIVER(tx, rx, 11);
+  //   // ReadBuffer(offset, payloadLengthRx)
+	 // *(uint32_t*)tx = 0x1B | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	 // *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	 // *(uint32_t*)(tx+8) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	 // SPI1_TRANSCEIVER(tx, rx, 11);
 
-	 received = *(int*) (rx+3);
-	 uart_buf_len = sprintf(uart_buf, "received: %05d\r\n", received);
-	 HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+	 // received = *(int*) (rx+3);
+	 // uart_buf_len = sprintf(uart_buf, "received: %05d\r\n", received);
+	 // HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
 
     // FrequencyError[Hz]
 
@@ -234,10 +234,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
    while (1)
    {
-	      // WriteBuffer(offset, *data)
-	      *(uint32_t*)tx = 0x1A | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	      *(uint32_t*)(tx+4) = 0x00000000;
-	      SPI1_TRANSCEIVER(tx, rx, 8);
+	      // // WriteBuffer(offset, *data)
+	      // *(uint32_t*)tx = 0x1A | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+	      // *(uint32_t*)(tx+4) = 0x00000000;
+	      // SPI1_TRANSCEIVER(tx, rx, 8);
 	      // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
   	     *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
   	     SPI1_TRANSCEIVER(tx, rx, 4);
