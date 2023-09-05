@@ -75,7 +75,8 @@ static void MX_TIM2_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	char uart_buf[100];
+	int uart_buf_len;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -106,6 +107,18 @@ int main(void)
   uint8_t rx;
 
   rx = a.Init();
+  if(rx == 0)
+  {
+	  uart_buf_len = sprintf(uart_buf, "SX1280 Initialize success\r\n");
+	  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+  }
+  else
+  {
+	  uart_buf_len = sprintf(uart_buf, "SX1280 Initialize fail\r\n");
+	  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+	  while(1);
+  }
+
 
   HAL_TIM_Base_Start_IT(&htim2);
 
@@ -124,12 +137,39 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t time_temp;
+  uint32_t counter = 0;
+  uint32_t counter_ = 0;
+  uint32_t temp_counter[2] = {0};
+
+  time_temp = HAL_GetTick();
+  counter = 0;
+  counter_= 0;
+
   while (1)
   {
-	  while(a.PutPacket(test_packet));
-	  times++;
-	  uint16_t temp;
-	  temp = a.GetIrqStatus();
+	  temp_counter[0] = counter;
+	  while(a.PutPacket((uint8_t*)temp_counter))counter_++;
+//	  times++;
+	  counter ++;
+	  counter_++;
+	  if (counter >= 100)
+	  {
+		  time_temp = HAL_GetTick() - time_temp;
+
+		  float bps = 100*8*8*1000./time_temp;
+
+
+		  uart_buf_len = sprintf(uart_buf, "Bit Rate: %15.5f bps, count: %3lu, total put count:%8lu\r\n", bps, counter, counter_);
+		  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+
+		  counter = 0;
+		  counter_= 0;
+		  time_temp = HAL_GetTick();
+	  }
+
+//	  uint16_t temp;
+//	  temp = a.GetIrqStatus();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -294,7 +334,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 79;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 999;
+  htim2.Init.Period = 4999999;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

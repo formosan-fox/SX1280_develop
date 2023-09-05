@@ -70,6 +70,7 @@ uint8_t SX128x_formal_board::Init()
 	uint8_t rx[2], tx[2];
 	*(uint32_t*)tx = 0x80 | 0x01 << 8;
 	HalSpiTransferDelay(rx, tx, 2);
+	HAL_Delay(10);
 	RadioStatus_t status;
 	status = GetStatus();
 	if(status.Fields.CmdStatus != 0x01)
@@ -84,7 +85,7 @@ uint8_t SX128x_formal_board::Init()
 SX128x_formal_board::SX128x_formal_board()
 {
 	mparams.PacketType = PACKET_TYPE_LORA;
-    mparams.Params.LoRa.SpreadingFactor = LORA_SF7;
+    mparams.Params.LoRa.SpreadingFactor = LORA_SF5;
 	mparams.Params.LoRa.Bandwidth = LORA_BW_0800;
 	mparams.Params.LoRa.CodingRate = LORA_CR_4_5;
 

@@ -727,11 +727,11 @@ inline void SX128x::WaitOnBusyLong() {
 
 void SX128x::Reset(void) {
 	HalGpioWrite(GPIO_PIN_RESET, 1);
-	HAL_Delay(10);
+	HAL_Delay(100);
 	HalGpioWrite(GPIO_PIN_RESET, 0);
-	HAL_Delay(10);
+	HAL_Delay(100);
 	HalGpioWrite(GPIO_PIN_RESET, 1);
-	HAL_Delay(10);
+	HAL_Delay(100);
 }
 
 void SX128x::Wakeup(void) {
