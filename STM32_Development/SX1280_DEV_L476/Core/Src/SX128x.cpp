@@ -587,7 +587,7 @@ double SX128x::GetFrequencyError( )
 int32_t SX128x::complement2(const uint32_t num, const uint8_t bitCnt )
 {
 	int32_t retVal = ( int32_t )num;
-	if (num >= 2<<( bitCnt - 2 ) )
+	if ((int)num >= 2<<( bitCnt - 2 ) )
 	{
 		retVal -= 2<<( bitCnt - 1 );
 	}
@@ -634,6 +634,11 @@ void SX128x::ProcessIrqs() {
 	auto& rxError = callbacks.rxError;
 	auto& rangingDone = callbacks.rangingDone;
 	auto& cadDone = callbacks.cadDone;
+
+	(void)rxSyncWordDone;
+	(void)rangingDone;
+	(void)cadDone;
+
 
 	switch( packetType )
 	{	// only LORA is used

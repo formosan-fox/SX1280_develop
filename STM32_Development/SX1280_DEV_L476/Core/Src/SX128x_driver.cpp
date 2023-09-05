@@ -1,4 +1,4 @@
-#include "SX128x_formal_board.h"
+#include "SX128x_OBJ.h"
 #include "main.h"
 
 //---------------------------------------------------------------------------------------------
@@ -7,7 +7,7 @@
 #if defined SOPHIA_V1
 extern I2C_HandleTypeDef hi2c2;
 extern SPI_HandleTypeDef hspi2;
-uint8_t SX128x_formal_board::HalGpioRead(GpioPinFunction_t func)
+uint8_t SX128x_OBJ::HalGpioRead(GpioPinFunction_t func)
 {
 	uint8_t rx = HAL_OK;
 	HAL_StatusTypeDef rv;
@@ -55,7 +55,7 @@ uint8_t SX128x_formal_board::HalGpioRead(GpioPinFunction_t func)
 
 }
 
-void SX128x_formal_board::HalGpioWrite(GpioPinFunction_t func, uint8_t value)
+void SX128x_OBJ::HalGpioWrite(GpioPinFunction_t func, uint8_t value)
 {
 	uint8_t rx;
 	HAL_StatusTypeDef rv;
@@ -155,24 +155,32 @@ void SX128x_formal_board::HalGpioWrite(GpioPinFunction_t func, uint8_t value)
 	}
 }
 
-void SX128x_formal_board::HalSpiTransfer(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
+void SX128x_OBJ::HalSpiTransfer(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
 {
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)GPIO_PIN_RESET);
-	HAL_SPI_TransmitReceive(&hspi2, (uint8_t*)buffer_out, buffer_in, size, 1);
+#ifdef SX1280_INTERRUPT_MODE
+	HAL_SPI_TransmitReceive_IT(&hspi2, (uint8_t*)buffer_out, buffer_in, size, 1);
+#else
+	HAL_SPI_TransmitReceive(&hspi2, (uint8_t*)buffer_out, buffer_in, size);
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)GPIO_PIN_SET);
+#endif
 }
 
-void SX128x_formal_board::HalSpiTransferDelay(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
+void SX128x_OBJ::HalSpiTransferDelay(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
 {
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)GPIO_PIN_RESET);
 	HAL_Delay(10);
+#ifdef SX1280_INTERRUPT_MODE
+	HAL_SPI_TransmitReceive_IT(&hspi2, (uint8_t*)buffer_out, buffer_in, size);
+#else
 	HAL_SPI_TransmitReceive(&hspi2, (uint8_t*)buffer_out, buffer_in, size, 1);
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)GPIO_PIN_SET);
+#endif
 }
 #elif defined NUCLEO_L476
 extern SPI_HandleTypeDef hspi1;
 
-uint8_t SX128x_formal_board::HalGpioRead(GpioPinFunction_t func)
+uint8_t SX128x_OBJ::HalGpioRead(GpioPinFunction_t func)
 {
 	switch (func)
 	{
@@ -192,7 +200,7 @@ uint8_t SX128x_formal_board::HalGpioRead(GpioPinFunction_t func)
 }
 
 
-void SX128x_formal_board::HalGpioWrite(GpioPinFunction_t func, register uint8_t value)
+void SX128x_OBJ::HalGpioWrite(GpioPinFunction_t func, register uint8_t value)
 {
 	switch (func)
 	{
@@ -213,19 +221,27 @@ void SX128x_formal_board::HalGpioWrite(GpioPinFunction_t func, register uint8_t 
 	}
 }
 
-void SX128x_formal_board::HalSpiTransfer(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
+void SX128x_OBJ::HalSpiTransfer(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
 {
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)0);
+#ifdef SX1280_INTERRUPT_MODE
+	HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t*)buffer_out, buffer_in, size);
+#else
 	HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)buffer_out, buffer_in, size, 1);
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)1);
+#endif
 }
 
-void SX128x_formal_board::HalSpiTransferDelay(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
+void SX128x_OBJ::HalSpiTransferDelay(uint8_t *buffer_in, const uint8_t *buffer_out, uint16_t size)
 {
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)0);
 	HAL_Delay(10);
+#ifdef SX1280_INTERRUPT_MODE
+	HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t*)buffer_out, buffer_in, size);
+#else
 	HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)buffer_out, buffer_in, size, 1);
 	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)1);
+#endif
 }
 
 

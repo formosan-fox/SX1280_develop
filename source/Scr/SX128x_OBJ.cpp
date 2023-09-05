@@ -1,10 +1,10 @@
-#include "SX128x_formal_board.h"
+#include "SX128x_OBJ.h"
 #include "main.h"
 
 extern TIM_HandleTypeDef htim1;
 extern int irq_timeout_times;
 
-void SX128x_formal_board::CommonTransceiverSetting()
+void SX128x_OBJ::CommonTransceiverSetting()
 {
     SetStandby((RadioStandbyModes_t)MODE_STDBY_XOSC);
     SetPacketType(PACKET_TYPE_LORA);
@@ -14,14 +14,14 @@ void SX128x_formal_board::CommonTransceiverSetting()
     SetPacketParams(pparams);
 }
 
-void SX128x_formal_board::TxSetting()
+void SX128x_OBJ::TxSetting()
 {
 	SetTxParams(13, RADIO_RAMP_02_US);
 	InterruptSetting();
 	SetDioIrqParams(0xFFFF, 0xFFFF, 0x0000, 0x0000);
 }
 
-uint8_t SX128x_formal_board::TxBlocking(uint8_t* data_out, uint8_t len)
+uint8_t SX128x_OBJ::TxBlocking(uint8_t* data_out, uint8_t len)
 {
 	while(tx_activated); // wait not busy
 
@@ -51,17 +51,17 @@ uint8_t SX128x_formal_board::TxBlocking(uint8_t* data_out, uint8_t len)
 	return 0;
 }
 
-inline void SX128x_formal_board::InterruptSetting()
+inline void SX128x_OBJ::InterruptSetting()
 {
 	SetDioIrqParams(0x0003, 0x0003, 0x0000, 0x0000);
 }
 
-inline void SX128x_formal_board::InterruptClearing()
+inline void SX128x_OBJ::InterruptClearing()
 {
 	ClearIrqStatus(0xFFFF);
 }
 
-uint8_t SX128x_formal_board::Init()
+uint8_t SX128x_OBJ::Init()
 {
 	Reset();
 	// Wakeup();
@@ -70,7 +70,6 @@ uint8_t SX128x_formal_board::Init()
 	uint8_t rx[2], tx[2];
 	*(uint32_t*)tx = 0x80 | 0x01 << 8;
 	HalSpiTransferDelay(rx, tx, 2);
-	HAL_Delay(10);
 	RadioStatus_t status;
 	status = GetStatus();
 	if(status.Fields.CmdStatus != 0x01)
@@ -82,10 +81,10 @@ uint8_t SX128x_formal_board::Init()
 	return 0;
 }
 
-SX128x_formal_board::SX128x_formal_board()
+SX128x_OBJ::SX128x_OBJ()
 {
 	mparams.PacketType = PACKET_TYPE_LORA;
-    mparams.Params.LoRa.SpreadingFactor = LORA_SF5;
+    mparams.Params.LoRa.SpreadingFactor = LORA_SF7;
 	mparams.Params.LoRa.Bandwidth = LORA_BW_0800;
 	mparams.Params.LoRa.CodingRate = LORA_CR_4_5;
 
@@ -100,7 +99,7 @@ SX128x_formal_board::SX128x_formal_board()
 	
 }
 
-uint8_t SX128x_formal_board::PutPacket(uint8_t* in)
+uint8_t SX128x_OBJ::PutPacket(uint8_t* in)
 {
 
 	if(tx_length == 8) {
@@ -129,12 +128,12 @@ uint8_t SX128x_formal_board::PutPacket(uint8_t* in)
 	return 0;
 }
 
-inline uint8_t SX128x_formal_board::GetLength()
+inline uint8_t SX128x_OBJ::GetLength()
 {
 	return tx_length;
 }
 
-void SX128x_formal_board::tx_recursion()
+void SX128x_OBJ::tx_recursion()
 {
 
 	uint16_t irqRegs = GetIrqStatus();

@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "SX128x_formal_board.h"
+#include <stdio.h>
+#include "SX128x_OBJ.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +49,7 @@ TIM_HandleTypeDef htim2;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-SX128x_formal_board a;
+SX128x_OBJ a;
 int times = 0;
 /* USER CODE END PV */
 
@@ -149,7 +150,12 @@ int main(void)
   while (1)
   {
 	  temp_counter[0] = counter;
-	  while(a.PutPacket((uint8_t*)temp_counter))counter_++;
+	  while(a.PutPacket((uint8_t*)temp_counter))
+	  {
+		  counter_++;
+//		  for(int i = 0; i < 10000; i++);
+		  HAL_Delay(1);
+	  }
 //	  times++;
 	  counter ++;
 	  counter_++;
@@ -334,7 +340,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 79;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4999999;
+  htim2.Init.Period = 999;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -457,7 +463,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *spi)
+{
+	if(spi->Instance == SPI1)
+	{
+		HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)1);
+	}
+}
 /* USER CODE END 4 */
 
 /**

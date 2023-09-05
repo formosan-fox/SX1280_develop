@@ -1,3 +1,6 @@
+#ifndef _SX128x_OBJ_
+#define _SX128x_OBJ_
+
 #include "SX128x.hpp"
 #include "main.h"
 
@@ -7,8 +10,9 @@
 #define PACKET_SIZE 8
 #define FIFO_SIZE 8
 #define IS_TX
+#define SX1280_INTERRUPT_MODE
 
-class SX128x_formal_board : public SX128x
+class SX128x_OBJ : public SX128x
 {
 private:
 #ifdef IS_TX
@@ -30,7 +34,7 @@ private:
 
 public:
     // constructor
-    SX128x_formal_board();
+    SX128x_OBJ();
 
     // common setting
     void CommonTransceiverSetting();
@@ -55,3 +59,27 @@ public:
     // interrupt recursive
     void tx_recursion();
 };
+
+#if defined SX1280_INTERRUPT_MODE
+#if defined SOPHIA_V1
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *spi)
+{
+	if(spi->Instance == SPI2)
+	{
+		HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)1);
+	}
+}
+
+#endif
+#if defined NUCLEO_L476
+//void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *spi)
+//{
+//	if(spi->Instance == SPI1)
+//	{
+//		HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, (GPIO_PinState)1);
+//	}
+//}
+#endif
+#endif
+
+#endif
