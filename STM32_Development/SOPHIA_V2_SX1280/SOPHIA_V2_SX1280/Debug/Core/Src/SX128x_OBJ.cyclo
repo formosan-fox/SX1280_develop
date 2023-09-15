@@ -1,0 +1,16 @@
+gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	1
+std_function.h:240:5:std::_Function_base::_Function_base()	1
+SX128x_OBJ.cpp:7:6:void SX128x_OBJ::CommonTransceiverSetting()	1
+SX128x_OBJ.cpp:17:6:void SX128x_OBJ::TxSetting()	1
+SX128x_OBJ.cpp:24:9:uint8_t SX128x_OBJ::TxBlocking(uint8_t*, uint8_t)	4
+SX128x_OBJ.cpp:54:13:void SX128x_OBJ::InterruptSetting()	1
+SX128x_OBJ.cpp:64:9:uint8_t SX128x_OBJ::Init()	3
+SX128x.hpp:1056:9:SX128x::<unnamed struct>::<constructor>()	1
+SX128x.hpp:1069:2:SX128x::SX128x()	1
+SX128x_OBJ.cpp:84:1:SX128x_OBJ::SX128x_OBJ()	1
+SX128x_OBJ.cpp:102:9:uint8_t SX128x_OBJ::PutPacket(uint8_t*)	4
+SX128x_OBJ.cpp:136:6:void SX128x_OBJ::tx_recursion()	3
+std_function.h:330:7:)>::function() [with _Res = void; _ArgTypes = {}]	1
+std_function.h:330:7:)>::function() [with _Res = void; _ArgTypes = {SX128x::IrqErrorCode_t}]	1
+std_function.h:330:7:)>::function() [with _Res = void; _ArgTypes = {SX128x::IrqRangingCode_t}]	1
+std_function.h:330:7:)>::function() [with _Res = void; _ArgTypes = {bool}]	1

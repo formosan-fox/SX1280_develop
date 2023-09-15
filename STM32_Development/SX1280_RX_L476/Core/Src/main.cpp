@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "SX128x_OBJ.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,10 +43,12 @@
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
 
+TIM_HandleTypeDef htim1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+SX128x_OBJ sx1280;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -53,14 +56,15 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM1_Init(void);
 /* USER CODE BEGIN PFP */
-static void SPI1_TRANSCEIVER(uint8_t* tx, uint8_t* rx, uint8_t lengh)
-{
-	HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_RESET);
-	HAL_Delay(1);
-	HAL_SPI_TransmitReceive(&hspi1, tx, rx, lengh, 10);
-	HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_SET);
-}
+//static void SPI1_TRANSCEIVER(uint8_t* tx, uint8_t* rx, uint8_t lengh)
+//{
+//	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, GPIO_PIN_RESET);
+//	HAL_Delay(1);
+//	HAL_SPI_TransmitReceive(&hspi1, tx, rx, lengh, 10);
+//	HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, GPIO_PIN_SET);
+//}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -98,12 +102,14 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_SPI1_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
 
   char uart_buf[100];
   int uart_buf_len;
-  int received;
+//  int received;
+  uint8_t rx_buffer[8];
 
   uart_buf_len = sprintf(uart_buf, "SX1280 RX bit rate test\r\n");
   HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
@@ -111,44 +117,60 @@ int main(void)
   //===========================================
   //===========================================
 
-  uint8_t tx[16] = {};
-  uint8_t rx[16] = {};
+  uint8_t rx;
 
-  // reset
-  HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
-  HAL_Delay(10);
-  HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_RESET);
-  HAL_Delay(10);
-  HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
+  rx = sx1280.Init();
+  if(rx == 0)
+  {
+	  uart_buf_len = sprintf(uart_buf, "SX1280 Initialize success\r\n");
+	  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+  }
+  else
+  {
+	  uart_buf_len = sprintf(uart_buf, "SX1280 Initialize fail\r\n");
+	  HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+	  while(1);
+  }
 
-  //===========================================
-  // common transceiver setting for LoRa
-  //===========================================
 
-  // setstandby(stdby_xosc)
-  *(uint32_t*)tx = 0x80 | 0x01 << 8;
-  SPI1_TRANSCEIVER(tx, rx, 2);
-
-  // setpackettype(packet_type_lora)
-  *(uint32_t*)tx = 0x8A | 0x01 << 8; // LoRa mode
-  SPI1_TRANSCEIVER(tx, rx, 2);
-
-  // setrffrequency(rfFrequency)
-  *(uint32_t*)tx = 0x86 | 0xB8 << 8 | 0x9D << 16 | 0x89 << 24;
-  SPI1_TRANSCEIVER(tx, rx, 4);
-
-  // setbufferbaseaddress()
-  *(uint32_t*)tx = 0x8F | 0x80 << 8 | 0x00 << 16;
-  SPI1_TRANSCEIVER(tx, rx, 3);
-
-  // setmodulationparams(modparam1, modparam2, modparam3)
-  *(uint32_t*)tx = 0x8B | 0x70 << 8 | 0x18 << 16 | 0x01 << 24;
-  SPI1_TRANSCEIVER(tx, rx, 4);
-
-  // setpacketparams(pktparam1, pktparam2, pktparam3, pktparam4, pktparam5)
-  *(uint32_t*)tx = 0x8C | 0x0C << 8 | 0x80 << 16 | 0x08 << 24;
-  *(uint32_t*)(tx+4) = 0x20 | 0x40 << 8 | 0x00 << 16 | 0x00 << 24;
-  SPI1_TRANSCEIVER(tx, rx, 8);
+//  uint8_t tx[16] = {};
+//  uint8_t rx[16] = {};
+//
+//  // reset
+//  HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
+//  HAL_Delay(10);
+//  HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_RESET);
+//  HAL_Delay(10);
+//  HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
+//
+//  //===========================================
+//  // common transceiver setting for LoRa
+//  //===========================================
+//
+//  // setstandby(stdby_xosc)
+//  *(uint32_t*)tx = 0x80 | 0x01 << 8;
+//  SPI1_TRANSCEIVER(tx, rx, 2);
+//
+//  // setpackettype(packet_type_lora)
+//  *(uint32_t*)tx = 0x8A | 0x01 << 8; // LoRa mode
+//  SPI1_TRANSCEIVER(tx, rx, 2);
+//
+//  // setrffrequency(rfFrequency)
+//  *(uint32_t*)tx = 0x86 | 0xB8 << 8 | 0x9D << 16 | 0x89 << 24;
+//  SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//  // setbufferbaseaddress()
+//  *(uint32_t*)tx = 0x8F | 0x80 << 8 | 0x00 << 16;
+//  SPI1_TRANSCEIVER(tx, rx, 3);
+//
+//  // setmodulationparams(modparam1, modparam2, modparam3)
+//  *(uint32_t*)tx = 0x8B | 0x70 << 8 | 0x18 << 16 | 0x01 << 24;
+//  SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//  // setpacketparams(pktparam1, pktparam2, pktparam3, pktparam4, pktparam5)
+//  *(uint32_t*)tx = 0x8C | 0x0C << 8 | 0x80 << 16 | 0x08 << 24;
+//  *(uint32_t*)(tx+4) = 0x20 | 0x40 << 8 | 0x00 << 16 | 0x00 << 24;
+//  SPI1_TRANSCEIVER(tx, rx, 8);
 
   //   //===========================================
   //   // Tx Setting and Operations
@@ -181,11 +203,12 @@ int main(void)
     // Rx Setting and Operations
     //===========================================
 
+  	sx1280.RxSetting();
     // SetDioIrqParams(irqMask, dio1Mask, dio2Mask, dio3Mask)
-    *(uint32_t*)tx = 0x8D | 0x40 << 8 | 0x23 << 16 | 0x00 << 24;
-    *(uint32_t*)(tx+4) = 0x01 | 0x00 << 8 | 0x02 << 16 | 0x40 << 24;
-    *(uint32_t*)(tx+8) = 0x20;
-    SPI1_TRANSCEIVER(tx, rx, 9);
+//    *(uint32_t*)tx = 0x8D | 0x40 << 8 | 0x23 << 16 | 0x00 << 24;
+//    *(uint32_t*)(tx+4) = 0x01 | 0x00 << 8 | 0x02 << 16 | 0x40 << 24;
+//    *(uint32_t*)(tx+8) = 0x20;
+//    SPI1_TRANSCEIVER(tx, rx, 9);
 
   //   // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
   //   *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
@@ -234,47 +257,44 @@ int main(void)
   /* USER CODE BEGIN WHILE */
    while (1)
    {
-	      // // WriteBuffer(offset, *data)
-	      // *(uint32_t*)tx = 0x1A | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-	      // *(uint32_t*)(tx+4) = 0x00000000;
-	      // SPI1_TRANSCEIVER(tx, rx, 8);
-	      // SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
-  	     *(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     SPI1_TRANSCEIVER(tx, rx, 4);
-
-  	     // WaitIrq
-  	     while(1)
-  	     {
-  	  	   *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	  	   SPI1_TRANSCEIVER(tx, rx, 4);
-  	  	   if(rx[3] & 0x02) break;
-  	     }
-
-  	     // GetPacketStatus()
-  	     *(uint32_t*)tx = 0x1D | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16;
-  	     SPI1_TRANSCEIVER(tx, rx, 7);
-
-  	     // ClrIrqStatus(irqMask)
-  	     *(uint32_t*)tx = 0x97 | 0xFF << 8 | 0xFF << 16;
-  	     SPI1_TRANSCEIVER(tx, rx, 3);
-
-  	    *(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     SPI1_TRANSCEIVER(tx, rx, 4);
-
-  	     // GetRxBufferStatus()
-  	     *(uint32_t*)tx = 0x17 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     SPI1_TRANSCEIVER(tx, rx, 4);
-
-  	     // ReadBuffer(offset, payloadLengthRx)
-  	     *(uint32_t*)tx = 0x1B | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     *(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     *(uint32_t*)(tx+8) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
-  	     SPI1_TRANSCEIVER(tx, rx, 11);
-
-  		 received = *(int*) (rx+3);
-  		 uart_buf_len = sprintf(uart_buf, "received: %05d\r\n", received);
-  		 HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
+//		// WriteBuffer(offset, *data)
+//		*(uint32_t*)tx = 0x1A | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		*(uint32_t*)(tx+4) = 0x00000000;
+//		SPI1_TRANSCEIVER(tx, rx, 8);
+//		SetRx(periodBase, periodBaseCount[15:8], periodBaseCount[7:0])
+//		*(uint32_t*)tx = 0x82 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//		// WaitIrq
+//
+//
+//		// GetPacketStatus()
+//		*(uint32_t*)tx = 0x1D | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		*(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16;
+//		SPI1_TRANSCEIVER(tx, rx, 7);
+//
+//		// ClrIrqStatus(irqMask)
+//		*(uint32_t*)tx = 0x97 | 0xFF << 8 | 0xFF << 16;
+//		SPI1_TRANSCEIVER(tx, rx, 3);
+//
+//		*(uint32_t*)tx = 0x15 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//		// GetRxBufferStatus()
+//		*(uint32_t*)tx = 0x17 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		SPI1_TRANSCEIVER(tx, rx, 4);
+//
+//		// ReadBuffer(offset, payloadLengthRx)
+//		*(uint32_t*)tx = 0x1B | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		*(uint32_t*)(tx+4) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		*(uint32_t*)(tx+8) = 0x00 | 0x00 << 8 | 0x00 << 16 | 0x00 << 24;
+//		SPI1_TRANSCEIVER(tx, rx, 11);
+//
+//		received = *(int*) (rx+3);
+	   	sx1280.RxBlocking(rx_buffer, 8);
+		uart_buf_len = sprintf(uart_buf, "received: %02X %02X %02X %02X %02X %02X %02X %02X\r\n",
+				rx_buffer[0], rx_buffer[1], rx_buffer[2], rx_buffer[3], rx_buffer[4], rx_buffer[5], rx_buffer[6], rx_buffer[7]);
+		HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len, 100);
 
   	     // FrequencyError[Hz]
 
@@ -359,7 +379,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -373,6 +393,53 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief TIM1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM1_Init(void)
+{
+
+  /* USER CODE BEGIN TIM1_Init 0 */
+
+  /* USER CODE END TIM1_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM1_Init 1 */
+
+  /* USER CODE END TIM1_Init 1 */
+  htim1.Instance = TIM1;
+  htim1.Init.Prescaler = 79;
+  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim1.Init.Period = 65535;
+  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim1.Init.RepetitionCounter = 0;
+  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM1_Init 2 */
+
+  /* USER CODE END TIM1_Init 2 */
 
 }
 
@@ -392,7 +459,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 921600;
+  huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -432,7 +499,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SX1280_RST_GPIO_Port, SX1280_RST_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SPI1_NSS_GPIO_Port, SPI1_NSS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(SX1280_NSS_GPIO_Port, SX1280_NSS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
@@ -447,12 +514,24 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(SX1280_RST_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SPI1_NSS_Pin */
-  GPIO_InitStruct.Pin = SPI1_NSS_Pin;
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SX1280_BUSY_Pin */
+  GPIO_InitStruct.Pin = SX1280_BUSY_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(SX1280_BUSY_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SX1280_NSS_Pin */
+  GPIO_InitStruct.Pin = SX1280_NSS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(SPI1_NSS_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(SX1280_NSS_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

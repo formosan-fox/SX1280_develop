@@ -1,0 +1,20 @@
+gthr-default.h:229:1:int __gthread_key_delete(__gthread_key_t)	1
+std_function.h:242:5:std::_Function_base::~_Function_base()	2
+SX128x.hpp:1051:15:virtual void SX128x::HalPreTx()	1
+SX128x.hpp:1052:15:virtual void SX128x::HalPreRx()	1
+SX128x.hpp:1053:15:virtual void SX128x::HalPostTx()	1
+SX128x.hpp:1054:15:virtual void SX128x::HalPostRx()	1
+SX128x.hpp:1112:18:virtual uint8_t SX128x::GetDioStatus()	1
+SX128x_driver.cpp:176:9:virtual uint8_t SX128x_OBJ::HalGpioRead(SX128x::GpioPinFunction_t)	6
+SX128x_driver.cpp:196:6:virtual void SX128x_OBJ::HalGpioWrite(SX128x::GpioPinFunction_t, uint8_t)	3
+SX128x_driver.cpp:217:6:virtual void SX128x_OBJ::HalSpiTransfer(uint8_t*, const uint8_t*, uint16_t)	1
+SX128x_driver.cpp:224:6:void SX128x_OBJ::HalSpiTransferDelay(uint8_t*, const uint8_t*, uint16_t)	1
+std_function.h:303:11:std::function<void()>::~function()	1
+std_function.h:303:11:std::function<void(SX128x::IrqErrorCode_t)>::~function()	1
+std_function.h:303:11:std::function<void(SX128x::IrqRangingCode_t)>::~function()	1
+std_function.h:303:11:std::function<void(bool)>::~function()	1
+SX128x.hpp:1056:9:SX128x::<unnamed struct>::~<constructor>()	1
+SX128x.hpp:1071:10:SX128x::~SX128x()	1
+SX128x.hpp:1071:10:virtual SX128x::~SX128x()	1
+SX128x_OBJ.h:12:7:SX128x_OBJ::~SX128x_OBJ()	1
+SX128x_OBJ.h:12:7:virtual SX128x_OBJ::~SX128x_OBJ()	1

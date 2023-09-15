@@ -65,14 +65,16 @@ void Error_Handler(void);
 #define USART_RX_GPIO_Port GPIOA
 #define SX1280_RST_Pin GPIO_PIN_7
 #define SX1280_RST_GPIO_Port GPIOC
+#define SX1280_BUSY_Pin GPIO_PIN_9
+#define SX1280_BUSY_GPIO_Port GPIOA
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
-#define SPI1_NSS_Pin GPIO_PIN_6
-#define SPI1_NSS_GPIO_Port GPIOB
+#define SX1280_NSS_Pin GPIO_PIN_6
+#define SX1280_NSS_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

@@ -1,14 +1,15 @@
 #include "SX128x.hpp"
 #include "main.h"
 
-//#define SOPHIA_V1
-#define NUCLEO_L476
+// #define SOPHIA_V1
+// #define SOPHIA_V2
+ #define NUCLEO_L476
 
 #define PACKET_SIZE 8
 #define FIFO_SIZE 8
 #define IS_TX
 
-class SX128x_formal_board : public SX128x
+class SX128x_OBJ : public SX128x
 {
 private:
 #ifdef IS_TX
@@ -30,7 +31,7 @@ private:
 
 public:
     // constructor
-    SX128x_formal_board();
+    SX128x_OBJ();
 
     // common setting
     void CommonTransceiverSetting();
@@ -38,6 +39,10 @@ public:
     // tx operation
     void TxSetting();
     uint8_t TxBlocking(uint8_t* data_out, uint8_t len);
+
+    // rx operation
+    void RxSetting();
+    uint8_t RxBlocking(uint8_t* data_in, uint8_t max_len);
 
     // set interrupt
     void InterruptSetting();
